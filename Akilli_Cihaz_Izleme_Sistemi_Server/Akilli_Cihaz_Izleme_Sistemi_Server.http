@@ -1,0 +1,6 @@
+@Akilli_Cihaz_Izleme_Sistemi_Server_HostAddress = http://localhost:5268
+
+GET {{Akilli_Cihaz_Izleme_Sistemi_Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+

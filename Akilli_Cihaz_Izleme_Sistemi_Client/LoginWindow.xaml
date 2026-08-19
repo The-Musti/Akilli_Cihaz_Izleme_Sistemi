@@ -1,0 +1,32 @@
+﻿<Window x:Class="Akilli_Cihaz_Izleme_Sistemi_Client.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Giris Yap - Akilli Bina Yönetimi" Height="320" Width="500"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+	<Grid Background="White">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="50"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+		<Border Grid.Row="0" Background="#1B3B6F">
+			<TextBlock Text="Kullanici Girisi" Foreground="White" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+		</Border>
+		<StackPanel Grid.Row="1" Margin="40,20,40,20" VerticalAlignment="Center">
+			<TextBlock Text="Kullanici Adi" Foreground="#333333" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,4"/>
+			<TextBox x:Name="TxtUsername" Height="30" VerticalContentAlignment="Center" Padding="5,0" Margin="0,0,0,12" FontSize="13"/>
+			<TextBlock Text="Sifre" Foreground="#333333" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,4"/>
+			<PasswordBox x:Name="TxtPassword" Height="30" VerticalContentAlignment="Center" Padding="5,0" Margin="0,0,0,15" FontSize="13"/>
+			<TextBlock x:Name="TxtErrorMessage" Foreground="#D32F2F" FontSize="12" FontWeight="Bold" Margin="0,0,0,10" Visibility="Collapsed" HorizontalAlignment="Center"/>
+			<Button x:Name="BtnLogin"
+                    Content="Giris Yap"
+                    Click="BtnLogin_Click"
+                    Height="35"
+                    Background="#1B3B6F"
+                    Foreground="White"
+                    FontWeight="Bold"
+                    FontSize="13"
+                    Cursor="Hand"
+                    BorderThickness="0"/>
+		</StackPanel>
+	</Grid>
+</Window>

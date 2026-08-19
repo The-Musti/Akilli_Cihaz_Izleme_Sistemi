@@ -1,0 +1,207 @@
+﻿<Window x:Class="Akilli_Cihaz_Izleme_Sistemi_Client.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+        Title="Akıllı Bina Yönetim Sistemi" Height="650" Width="1100"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="45"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="130"/>
+        </Grid.RowDefinitions>
+
+        <!-- KOYU MAVİ ÜST BAŞLIK VE SAĞ ÜST BAĞLANTI GÖSTERGESİ -->
+        <Grid Grid.Row="0" Background="#1B3B6F">
+            <!-- Ortalanmış Başlık -->
+            <TextBlock Text="Akıllı Bina Yönetim Sistemi" 
+                       Foreground="White" 
+                       FontSize="18" 
+                       FontWeight="Bold" 
+                       HorizontalAlignment="Center" 
+                       VerticalAlignment="Center"/>
+
+            <!-- Sağ Üst Bağlantı Durum Göstergesi (Yeşil / Sarı / Kırmızı) -->
+            <StackPanel Orientation="Horizontal" 
+                        HorizontalAlignment="Right" 
+                        VerticalAlignment="Center" 
+                        Margin="0,0,15,0">
+
+                <Ellipse Width="10" Height="10" 
+                         Fill="{Binding StatusColor, FallbackValue='Orange'}" 
+                         Margin="0,0,6,0" 
+                         VerticalAlignment="Center"/>
+
+                <TextBlock Text="{Binding ConnectionStatus, FallbackValue='Bağlanıyor...'}" 
+                           Foreground="White" 
+                           FontSize="12" 
+                           FontWeight="SemiBold" 
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- CİHAZ LİSTESİ / CİHAZ DETAY ŞERİDİ -->
+        <Grid Grid.Row="1" Background="#F0F4F8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="1"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" Text="CİHAZ LİSTESİ" Foreground="#0066CC" FontWeight="Bold" FontSize="13" VerticalAlignment="Center" Margin="15,0,0,0"/>
+            <Rectangle Grid.Column="1" Fill="#D0D7DE"/>
+            <TextBlock Grid.Column="2" Text="CİHAZ DETAY / KOMUT" Foreground="#0066CC" FontWeight="Bold" FontSize="13" VerticalAlignment="Center" Margin="15,0,0,0"/>
+        </Grid>
+
+        <!-- ORTA İÇERİK ALANI -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="1"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- SOL PANEL: Zone Bazında Gruplanmış Cihaz Listesi -->
+            <ListBox Grid.Column="0" 
+                     ItemsSource="{Binding GroupedDevices}" 
+                     SelectedItem="{Binding SelectedDevice}"
+                     BorderThickness="0" Margin="10"
+                     HorizontalContentAlignment="Stretch">
+
+                <ListBox.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name, StringFormat='• {0}'}" 
+                                           FontWeight="Bold" FontSize="14" Foreground="#1B3B6F" Margin="0,8,0,4"/>
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </ListBox.GroupStyle>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="15,2,5,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="{Binding Name}" FontSize="13" Foreground="#333333"/>
+
+                            <Ellipse Grid.Column="1" Width="8" Height="8" Margin="8,0" VerticalAlignment="Center" Fill="{Binding StatusColor}"/>
+
+                            <TextBlock Grid.Column="2" FontSize="13" FontWeight="Bold" Foreground="{Binding StatusColor}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Text" Value="{Binding Value}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsOn}" Value="False">
+                                                <Setter Property="Text" Value="Kapalı"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <!-- Sütun Ayırıcı Çizgi -->
+            <Rectangle Grid.Column="1" Fill="#D0D7DE"/>
+
+            <!-- SAĞ PANEL: Seçili Cihaz Detay, Komutlar ve Grafik -->
+            <StackPanel Grid.Column="2" Margin="20,10,15,10">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                    <TextBlock Text="Seçili Cihaz: " FontSize="14" Foreground="#333333"/>
+                    <TextBlock Text="{Binding SelectedDevice.Name, FallbackValue='Cihaz Seçilmedi'}" FontSize="14" FontWeight="Bold" Foreground="#1B3B6F"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                    <TextBlock Text="Tip: " FontSize="13" Foreground="#555555"/>
+                    <TextBlock Text="{Binding SelectedDevice.Type, FallbackValue='-'}" FontSize="13" FontWeight="SemiBold"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                    <TextBlock Text="Durum: " FontSize="13" Foreground="#555555"/>
+                    <TextBlock Text="{Binding SelectedDevice.Status, FallbackValue='-'}" FontSize="13" FontWeight="Bold" Foreground="{Binding SelectedDevice.StatusColor, FallbackValue='Gray'}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Text="Değer: " FontSize="13" Foreground="#555555"/>
+                    <TextBlock Text="{Binding SelectedDevice.Value, FallbackValue='0.0'}" FontSize="14" FontWeight="Bold" Foreground="#1B3B6F"/>
+                </StackPanel>
+
+                <!-- KOMUTLAR VE TEXTBOX PANELİ -->
+                <WrapPanel Margin="0,0,0,10" VerticalAlignment="Center">
+                    <Button Content="[ Aç ]" 
+                            Command="{Binding TurnOnCommand}"
+                            Margin="0,0,8,5" Padding="4,2" Background="Transparent" BorderThickness="0" Foreground="#0066CC" FontWeight="Bold" Cursor="Hand"/>
+
+                    <Button Content="[ Kapat ]" 
+                            Command="{Binding TurnOffCommand}"
+                            Margin="0,0,8,5" Padding="4,2" Background="Transparent" BorderThickness="0" Foreground="#0066CC" FontWeight="Bold" Cursor="Hand"/>
+
+                    <TextBox Text="{Binding NewValue, UpdateSourceTrigger=PropertyChanged}" 
+                             Width="55" Height="24" Margin="0,0,6,5" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="2,0"/>
+
+                    <Button Content="[ Değer Gönder ]" 
+                            Command="{Binding SendValueCommand}"
+                            Margin="0,0,0,5" Padding="4,2" Background="Transparent" BorderThickness="0" Foreground="#0066CC" FontWeight="Bold" Cursor="Hand"/>
+                </WrapPanel>
+
+                <TextBlock Text="Son 1 Dakikalık Değişim Grafiği" 
+                           FontSize="12" FontWeight="Bold" Foreground="#1B3B6F" Margin="0,0,0,4"/>
+
+                <Border BorderBrush="#D0D7DE" BorderThickness="1" CornerRadius="4" Height="240" Padding="5" Background="#FAFAFA">
+                    <!-- LiveCharts v2 (SkiaSharpView.WPF) CartesianChart -->
+                    <lvc:CartesianChart Series="{Binding Series}"
+                                         XAxes="{Binding XAxes}"
+                                         YAxes="{Binding YAxes}"
+                                         TooltipPosition="Hidden"
+                                         LegendPosition="Hidden"/>
+                </Border>
+            </StackPanel>
+        </Grid>
+
+        <!-- ALT ALARM PANELİ -->
+        <Border Grid.Row="3" Background="#FFF0F0" BorderBrush="#FFCCCC" BorderThickness="0,1,0,0" Padding="15,10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="ALARM PANELİ" Foreground="#D32F2F" FontWeight="Bold" FontSize="13" Margin="0,0,0,8"/>
+
+                <ListBox Grid.Row="1" 
+                         ItemsSource="{Binding Alarms}" 
+                         Background="Transparent" 
+                         BorderThickness="0"
+                         HorizontalContentAlignment="Stretch">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border x:Name="AlarmBorder" Padding="6,3" CornerRadius="3" Background="Transparent">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="⚠ " Foreground="#D32F2F" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding OccuredAt, StringFormat='{}{0:HH:mm:ss}'}" Foreground="#D32F2F" Margin="0,0,8,0"/>
+                                    <TextBlock Text="{Binding Message}" Foreground="#D32F2F" FontWeight="Bold"/>
+                                </StackPanel>
+                            </Border>
+
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding IsNew}" Value="True">
+                                    <Setter TargetName="AlarmBorder" Property="Background" Value="#FFF9C4"/>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
